@@ -1,0 +1,2115 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ISMS-P PII Toolkit Demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+KR:wght@400;500;600;700&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: dark;
+      --s-1: 8px;
+      --s-2: 16px;
+      --s-3: 24px;
+      --s-4: 32px;
+      --font-display: "Outfit", system-ui, sans-serif;
+      --font-body: "Noto Sans KR", system-ui, sans-serif;
+      --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+      --bg-1: #020617;
+      --bg-2: #0f172a;
+      --surface: rgba(15, 23, 42, 0.78);
+      --surface-strong: rgba(15, 23, 42, 0.95);
+      --surface-soft: rgba(30, 41, 59, 0.45);
+      --line: rgba(148, 163, 184, 0.14);
+      --line-strong: rgba(45, 212, 191, 0.35);
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --accent: #5eead4;
+      --accent-strong: #2dd4bf;
+      --accent-deep: #0f766e;
+      --success: #86efac;
+      --warning: #fde68a;
+      --danger: #fb7185;
+      --shadow: 0 24px 64px rgba(2, 6, 23, 0.55);
+      --radius: 20px;
+      --radius-sm: 12px;
+      --radius-pill: 999px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: var(--font-body);
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--text);
+      letter-spacing: -0.01em;
+      background:
+        radial-gradient(ellipse 80% 50% at 0% -10%, rgba(45, 212, 191, 0.12), transparent 50%),
+        radial-gradient(ellipse 60% 40% at 100% 0%, rgba(59, 130, 246, 0.1), transparent 45%),
+        linear-gradient(180deg, var(--bg-1) 0%, var(--bg-2) 100%);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+    main {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: var(--s-3) var(--s-2) var(--s-4);
+    }
+    h1, h2, h3, h4 { margin: 0; font-family: var(--font-display); font-weight: 600; letter-spacing: -0.02em; }
+    p { margin: 0; line-height: 1.65; color: var(--muted); }
+    code {
+      font-family: var(--font-mono);
+      font-size: 0.88em;
+      padding: 2px 6px;
+      border-radius: 6px;
+      background: rgba(2, 6, 23, 0.65);
+      border: 1px solid var(--line);
+      color: var(--accent);
+    }
+    .surface {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(20px);
+    }
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 0;
+      margin-bottom: var(--s-3);
+      border: 1px solid rgba(148, 163, 184, 0.1);
+      background:
+        linear-gradient(165deg, rgba(15, 23, 42, 0.92) 0%, rgba(15, 23, 42, 0.78) 100%);
+      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset;
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: linear-gradient(180deg, rgba(45, 212, 191, 0.55) 0%, rgba(45, 212, 191, 0.12) 100%);
+      border-radius: var(--radius) 0 0 var(--radius);
+      pointer-events: none;
+    }
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: var(--s-4) var(--s-3) var(--s-4) calc(var(--s-3) + 6px);
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--s-3);
+      align-items: center;
+    }
+    @media (min-width: 880px) {
+      .hero-grid {
+        grid-template-columns: minmax(0, 1.08fr) minmax(260px, 0.92fr);
+        gap: clamp(24px, 4vw, 48px);
+      }
+    }
+    .hero-copy {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: var(--s-2);
+    }
+    .hero-badge {
+      margin: 0;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: rgba(165, 243, 252, 0.92);
+    }
+    .hero-visual {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: var(--s-2);
+    }
+    .hero-visual-frame {
+      position: relative;
+      border-radius: 16px;
+      border: 1px solid rgba(148, 163, 184, 0.14);
+      background:
+        radial-gradient(ellipse 90% 70% at 70% 30%, rgba(45, 212, 191, 0.09), transparent 55%),
+        linear-gradient(165deg, rgba(2, 6, 23, 0.55) 0%, rgba(15, 23, 42, 0.35) 100%);
+      padding: var(--s-3) var(--s-2);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .hero-visual-frame svg {
+      width: 100%;
+      max-width: 300px;
+      height: auto;
+      display: block;
+    }
+    .hero-visual-caption {
+      margin: 0;
+      text-align: center;
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: rgba(148, 163, 184, 0.75);
+      font-family: var(--font-display);
+      font-weight: 600;
+    }
+    .hero-endpoints {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 2px;
+    }
+    .hero-chip {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 500;
+      padding: 5px 9px;
+      border-radius: 6px;
+      border: 1px solid rgba(45, 212, 191, 0.22);
+      background: rgba(2, 6, 23, 0.45);
+      color: rgba(165, 243, 252, 0.9);
+    }
+    .hero h1 {
+      font-size: clamp(26px, 2.8vw, 34px);
+      font-weight: 650;
+      margin: 0;
+      line-height: 1.18;
+      letter-spacing: -0.03em;
+      color: #f8fafc;
+    }
+    .hero p {
+      margin: 0;
+    }
+    .hero-lede {
+      font-size: 15px;
+      line-height: 1.58;
+      color: #cbd5e1;
+      margin: 0;
+      font-weight: 400;
+      letter-spacing: -0.01em;
+    }
+    .hero-steps {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .hero-steps li {
+      list-style: none;
+      font-size: 12px;
+      line-height: 1.45;
+      color: var(--muted);
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid rgba(148, 163, 184, 0.1);
+      background: rgba(2, 6, 23, 0.22);
+    }
+    @media (max-width: 640px) {
+      .hero-steps {
+        grid-template-columns: 1fr;
+      }
+    }
+    .hero-steps li::before {
+      content: attr(data-step);
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 600;
+      color: rgba(45, 212, 191, 0.85);
+      letter-spacing: 0.04em;
+      margin-bottom: 4px;
+    }
+    .hero-foot {
+      font-size: 13px;
+      line-height: 1.6;
+      color: #94a3b8;
+      margin: 0;
+      padding: var(--s-2) 0 0;
+      border-top: 1px solid rgba(148, 163, 184, 0.12);
+    }
+    .hero-foot strong {
+      color: #e2e8f0;
+      font-weight: 600;
+    }
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(300px, 1fr);
+      gap: var(--s-3);
+      align-items: start;
+    }
+
+    /* Tabs */
+    .tabs-container {
+      display: flex;
+      flex-direction: column;
+      gap: var(--s-2);
+    }
+    .tabs-header {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--s-1);
+      padding: var(--s-1);
+      background: rgba(2, 6, 23, 0.45);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--line);
+    }
+    .tab-btn {
+      flex: 1;
+      min-width: 0;
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 600;
+      padding: 12px var(--s-2);
+      cursor: pointer;
+      border-radius: 10px;
+      transition: color 0.2s, background 0.2s, box-shadow 0.2s;
+    }
+    .tab-btn:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.04);
+    }
+    .tab-btn:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+    .tab-btn.active {
+      color: #042f2e;
+      background: linear-gradient(180deg, #5eead4 0%, #2dd4bf 100%);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    }
+    .tab-pane {
+      display: none;
+      animation: fadeIn 0.35s ease;
+    }
+    .tab-pane.active {
+      display: block;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .tab-pane { animation: none; }
+      .tab-btn, button { transition: none; }
+    }
+
+    .panel {
+      padding: var(--s-3);
+    }
+    .demo-panel-form {
+      margin: 0;
+    }
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: var(--s-2);
+      margin-bottom: var(--s-3);
+      padding-bottom: var(--s-2);
+      border-bottom: 1px solid var(--line);
+      flex-wrap: wrap;
+    }
+    .panel-header h2 {
+      font-size: 20px;
+      font-weight: 600;
+    }
+    .endpoint-chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 12px;
+      border-radius: var(--radius-pill);
+      background: rgba(15, 118, 110, 0.2);
+      border: 1px solid var(--line-strong);
+      color: var(--accent);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    /* Segmented Control */
+    .segment-group {
+      display: flex;
+      flex-wrap: wrap;
+      width: 100%;
+      max-width: 100%;
+      background: rgba(2, 6, 23, 0.55);
+      border-radius: var(--radius-sm);
+      padding: 4px;
+      border: 1px solid var(--line);
+      gap: 4px;
+    }
+    .segment-label {
+      flex: 1;
+      min-width: 120px;
+      text-align: center;
+      padding: 11px var(--s-2);
+      cursor: pointer;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted);
+      transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+      margin: 0;
+    }
+    .segment-group input[type="radio"] {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .segment-group input[type="radio"]:focus-visible + .segment-label {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+    .segment-group input[type="radio"]:checked + .segment-label {
+      background: var(--surface-strong);
+      color: var(--text);
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+      border: 1px solid var(--line);
+    }
+
+    /* Chips */
+    .chip-group {
+      display: flex;
+      gap: var(--s-1);
+      flex-wrap: wrap;
+      margin-bottom: var(--s-2);
+    }
+    .chip-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 9px 16px;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--line);
+      background: rgba(2, 6, 23, 0.55);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--muted);
+      transition: border-color 0.2s, background 0.2s, color 0.2s;
+      margin: 0;
+    }
+    .chip-label:hover {
+      border-color: rgba(148, 163, 184, 0.45);
+    }
+    .chip-group input[type="checkbox"] {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .chip-group input[type="checkbox"]:focus-visible + .chip-label {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+    .chip-group input[type="checkbox"]:checked + .chip-label {
+      border-color: var(--accent-strong);
+      background: rgba(15, 118, 110, 0.25);
+      color: var(--accent);
+    }
+
+    /* Forms */
+    .form-section {
+      margin-bottom: var(--s-3);
+    }
+    .form-section.hidden {
+      display: none;
+    }
+    label.block-label {
+      display: block;
+      margin: 0 0 var(--s-1) 2px;
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+    .hint {
+      margin-top: var(--s-1);
+      margin-left: 2px;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+    .lead {
+      margin-bottom: var(--s-3);
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+    .decrypt-scenario {
+      margin: 0 0 var(--s-3);
+      padding: 14px 18px;
+      background: rgba(2, 6, 23, 0.45);
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      font-size: 13px;
+      line-height: 1.65;
+      color: var(--muted);
+    }
+    .decrypt-scenario h3 {
+      margin: 0 0 10px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .decrypt-scenario ol {
+      margin: 0;
+      padding-left: 1.25rem;
+    }
+    .decrypt-scenario li { margin-bottom: 8px; }
+    .decrypt-scenario li:last-child { margin-bottom: 0; }
+    .decrypt-scenario code {
+      font-size: 12px;
+      padding: 1px 5px;
+      border-radius: 6px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid var(--line);
+    }
+    textarea,
+    input[type="text"],
+    input[type="password"],
+    input[type="file"] {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      padding: 14px var(--s-2);
+      background: rgba(2, 6, 23, 0.72);
+      color: var(--text);
+      font: inherit;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    textarea::placeholder,
+    input::placeholder {
+      color: rgba(148, 163, 184, 0.55);
+    }
+    textarea:focus,
+    input:focus {
+      outline: none;
+      border-color: var(--accent-strong);
+      box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.12);
+    }
+    textarea {
+      min-height: 128px;
+      resize: vertical;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+    input[type="file"] {
+      padding: 12px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    input[type="file"]::file-selector-button {
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: 13px;
+      padding: 8px 16px;
+      margin-right: var(--s-2);
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: var(--surface-soft);
+      color: var(--text);
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    input[type="file"]::file-selector-button:hover {
+      background: rgba(45, 212, 191, 0.12);
+      border-color: var(--line-strong);
+    }
+
+    /* Primary action bar: single row, sticky */
+    .panel-actions {
+      position: sticky;
+      bottom: 0;
+      z-index: 30;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--s-1);
+      margin-top: var(--s-2);
+      margin-left: calc(-1 * var(--s-1));
+      margin-right: calc(-1 * var(--s-1));
+      padding: var(--s-2) var(--s-2);
+      border-radius: var(--radius-sm);
+      background: linear-gradient(180deg, rgba(15, 23, 42, 0.92) 0%, rgba(15, 23, 42, 0.98) 100%);
+      border: 1px solid var(--line);
+      box-shadow: 0 -8px 40px rgba(2, 6, 23, 0.65);
+    }
+    .panel-actions .btn-spacer {
+      flex: 1;
+      min-width: var(--s-2);
+    }
+    button,
+    .btn {
+      font-family: var(--font-body);
+      border: 1px solid var(--line);
+      background: var(--surface-strong);
+      color: var(--text);
+      padding: 12px 22px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: transform 0.15s ease, border-color 0.15s, box-shadow 0.15s;
+    }
+    button:focus-visible,
+    .btn:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+    button:hover:not(:disabled),
+    .btn:hover:not(:disabled) {
+      border-color: rgba(148, 163, 184, 0.35);
+    }
+    button:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+    button.primary,
+    .btn-primary {
+      border: none;
+      background: linear-gradient(180deg, #5eead4 0%, #2dd4bf 100%);
+      color: #042f2e;
+      box-shadow: 0 4px 20px rgba(45, 212, 191, 0.28);
+    }
+    button.primary:hover:not(:disabled),
+    .btn-primary:hover:not(:disabled) {
+      box-shadow: 0 6px 24px rgba(45, 212, 191, 0.38);
+      transform: translateY(-1px);
+    }
+    button.ghost,
+    .btn-ghost {
+      background: transparent;
+      border-color: var(--line);
+      color: var(--muted);
+    }
+    button.ghost:hover:not(:disabled),
+    .btn-ghost:hover:not(:disabled) {
+      color: var(--text);
+      border-color: rgba(148, 163, 184, 0.35);
+    }
+
+    /* Results */
+    .result-area {
+      margin-top: var(--s-3);
+      background: rgba(2, 6, 23, 0.5);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--line);
+      overflow: hidden;
+    }
+    .result-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--s-2);
+      padding: 12px var(--s-2);
+      background: rgba(30, 41, 59, 0.35);
+      border-bottom: 1px solid var(--line);
+    }
+    .result-header h3 {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin: 0;
+    }
+    .result-header button {
+      padding: 7px 14px;
+      font-size: 12px;
+      border-radius: 8px;
+    }
+    pre {
+      margin: 0;
+      padding: var(--s-2);
+      min-height: 120px;
+      max-height: 320px;
+      overflow: auto;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      line-height: 1.55;
+      white-space: pre-wrap;
+      word-break: break-word;
+      color: #cbd5e1;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: var(--s-3);
+      position: sticky;
+      top: var(--s-2);
+    }
+    .sidebar-card {
+      padding: var(--s-3);
+    }
+    .sidebar-card h3 {
+      font-size: 17px;
+      margin-bottom: var(--s-2);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .sidebar-card h3::before {
+      content: "";
+      display: block;
+      width: 3px;
+      height: 18px;
+      background: linear-gradient(180deg, var(--accent) 0%, var(--accent-deep) 100%);
+      border-radius: 2px;
+    }
+    
+    /* Tutorial */
+    .tutorial-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .tutorial-item {
+      display: flex;
+      gap: 12px;
+    }
+    .tutorial-num {
+      flex-shrink: 0;
+      width: 24px;
+      height: 24px;
+      border-radius: 12px;
+      background: rgba(103, 232, 249, 0.15);
+      color: var(--accent-strong);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      border: 1px solid rgba(103, 232, 249, 0.3);
+    }
+    .tutorial-text h4 {
+      font-size: 14px;
+      margin-bottom: 4px;
+      color: var(--text);
+    }
+    .tutorial-text p {
+      font-size: 13px;
+    }
+
+    /* Pipeline */
+    .pipeline {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .pipeline-step {
+      display: flex;
+      gap: 16px;
+      padding: 16px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: rgba(2, 6, 23, 0.4);
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    .pipeline-step::before {
+      content: "";
+      position: absolute;
+      left: 31px;
+      top: 48px;
+      bottom: -12px;
+      width: 2px;
+      background: var(--line);
+      z-index: 0;
+    }
+    .pipeline-step:last-child::before {
+      display: none;
+    }
+    .pipeline-step.active {
+      border-color: var(--accent);
+      background: rgba(8, 47, 73, 0.3);
+      transform: translateX(4px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .pipeline-step.done {
+      border-color: rgba(134, 239, 172, 0.4);
+    }
+    .pipeline-step.error {
+      border-color: rgba(253, 164, 175, 0.4);
+    }
+    .step-icon {
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      border-radius: 16px;
+      background: var(--surface-strong);
+      border: 2px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+      z-index: 1;
+      transition: border-color 0.25s, color 0.25s, box-shadow 0.25s;
+    }
+    .pipeline-step.active .step-icon {
+      border-color: var(--accent);
+      color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(103, 232, 249, 0.1);
+    }
+    .pipeline-step.done .step-icon {
+      background: var(--success);
+      border-color: var(--success);
+      color: #14532d;
+      font-family: var(--font-mono);
+      font-size: 11px;
+    }
+    .pipeline-step.error .step-icon {
+      background: var(--danger);
+      border-color: var(--danger);
+      color: #450a0a;
+      font-family: var(--font-mono);
+      font-size: 11px;
+    }
+    .step-content h4 {
+      font-size: 14px;
+      margin-bottom: 4px;
+      margin-top: 6px;
+    }
+    .step-content p {
+      font-size: 13px;
+    }
+
+    /* Summary */
+    .summary-grid {
+      display: grid;
+      gap: 12px;
+    }
+    .summary-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 16px;
+      background: rgba(2, 6, 23, 0.4);
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      font-size: 13px;
+    }
+    .summary-item span { color: var(--muted); }
+    .summary-item strong {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--accent);
+      text-align: right;
+      max-width: 58%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .summary-item-wide {
+      flex-wrap: wrap;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .summary-item-wide strong {
+      max-width: 100%;
+      white-space: normal;
+      word-break: break-all;
+      text-align: left;
+    }
+    .summary-detail-scroll {
+      max-height: min(52vh, 400px);
+      overflow-y: auto;
+      overflow-x: hidden;
+      margin-top: 8px;
+      padding: 8px 10px 10px 8px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: rgba(2, 6, 23, 0.35);
+      scrollbar-gutter: stable;
+    }
+    .summary-detail-scroll:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+    .summary-detail-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 0;
+    }
+    .summary-match {
+      padding: 12px 14px;
+      background: rgba(2, 6, 23, 0.55);
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+    .summary-match-head {
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 8px;
+      font-size: 13px;
+    }
+    .summary-match-idx {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--accent);
+      margin-right: 6px;
+    }
+    .summary-match-meta {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 4px;
+    }
+    .summary-match-meta code {
+      font-size: 11px;
+      padding: 1px 4px;
+    }
+    .summary-snippet {
+      margin-top: 10px;
+      padding: 10px 12px;
+      background: rgba(15, 23, 42, 0.9);
+      border-radius: 10px;
+      border: 1px solid var(--line-strong);
+    }
+    .summary-snippet-label {
+      display: block;
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 6px;
+      letter-spacing: 0.02em;
+    }
+    .summary-snippet-value {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--text);
+      word-break: break-all;
+      line-height: 1.45;
+    }
+    .summary-loc-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+      align-items: center;
+    }
+    .summary-loc-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      color: var(--muted);
+      background: rgba(45, 212, 191, 0.08);
+      border: 1px solid rgba(45, 212, 191, 0.25);
+    }
+    .summary-loc-badge strong {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--accent-strong);
+    }
+    .summary-loc-offset {
+      margin-top: 8px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .summary-note {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.55;
+      padding: 8px 2px 0;
+    }
+
+    @media (max-width: 1024px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar { position: static; }
+      .tabs-header { flex-direction: column; }
+      .tab-btn { width: 100%; }
+      .segment-label { min-width: 0; font-size: 12px; padding: 10px 12px; }
+      .panel-actions { margin-left: 0; margin-right: 0; }
+    }
+    @media (max-width: 560px) {
+      .panel-actions {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .panel-actions .btn-spacer {
+        display: none;
+      }
+      .panel-actions .hint {
+        max-width: none;
+        text-align: center;
+        order: 3;
+      }
+    }
+
+    /* Plain-language blocks */
+    .help-tab-intro {
+      margin-bottom: var(--s-3);
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+    .help-section-title {
+      font-family: var(--font-display);
+      font-size: 17px;
+      font-weight: 600;
+      margin: 0 0 6px;
+      color: var(--text);
+    }
+    .help-tutorial-block {
+      margin-bottom: var(--s-3);
+      padding: var(--s-3);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--line);
+      background: rgba(2, 6, 23, 0.35);
+    }
+    .help-tutorial-block .tutorial-list {
+      margin-top: var(--s-2);
+    }
+    .help-api-block {
+      margin-bottom: var(--s-3);
+      padding: var(--s-3);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--line);
+      background: rgba(2, 6, 23, 0.35);
+    }
+    .help-api-block .api-map-line {
+      margin: 0 0 10px;
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--muted);
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+    }
+    .help-api-block .api-map-line:last-child {
+      margin-bottom: 0;
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+    .help-api-block .api-map-line strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+    .help-api-block code {
+      font-size: 11px;
+    }
+    .hero-plain {
+      margin-top: 0;
+      margin-bottom: var(--s-3);
+      padding: var(--s-3);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--line);
+      background: rgba(2, 6, 23, 0.45);
+    }
+    .hero-plain h2 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: var(--s-2);
+      color: var(--text);
+    }
+    .hero-plain ul {
+      margin: 0;
+      padding-left: 1.25rem;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+    .hero-plain li {
+      margin-bottom: 8px;
+    }
+    .hero-plain-foot {
+      margin-top: var(--s-2);
+      padding-top: var(--s-2);
+      border-top: 1px solid var(--line);
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .glossary details {
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: rgba(2, 6, 23, 0.35);
+      margin-bottom: 8px;
+      overflow: hidden;
+    }
+    .glossary summary {
+      cursor: pointer;
+      padding: 10px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      list-style: none;
+    }
+    .glossary summary::-webkit-details-marker {
+      display: none;
+    }
+    .glossary summary::before {
+      content: "+";
+      display: inline-block;
+      width: 1.2em;
+      color: var(--accent);
+      font-weight: 700;
+    }
+    .glossary details[open] summary::before {
+      content: "";
+    }
+    .glossary details[open] summary {
+      border-bottom: 1px solid var(--line);
+    }
+    .glossary .glossary-body {
+      padding: 10px 12px 12px;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .friendly-result {
+      padding: var(--s-2);
+      border-bottom: 1px solid var(--line);
+      background: rgba(15, 118, 110, 0.08);
+      font-size: 14px;
+      line-height: 1.55;
+      color: var(--text);
+    }
+    .friendly-result[hidden] {
+      display: none !important;
+    }
+    .friendly-result h4 {
+      font-family: var(--font-display);
+      font-size: 15px;
+      font-weight: 600;
+      margin: 0 0 10px;
+    }
+    .friendly-result .friendly-lead {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .friendly-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .friendly-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      background: rgba(2, 6, 23, 0.55);
+      border: 1px solid var(--line);
+      color: var(--accent);
+    }
+    .friendly-tag em {
+      font-style: normal;
+      color: var(--muted);
+      margin-left: 6px;
+      font-size: 11px;
+    }
+    .friendly-detail {
+      margin: 0;
+      padding-left: 1.15rem;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+    .friendly-detail li { margin-bottom: 4px; }
+    .friendly-detail strong { color: var(--text); font-weight: 600; }
+    .friendly-error {
+      color: #fecdd3;
+      font-size: 14px;
+    }
+    .json-footnote {
+      padding: 8px 12px;
+      font-size: 11px;
+      color: var(--muted);
+      background: rgba(2, 6, 23, 0.35);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .pipeline-sending {
+      border-color: var(--accent-strong) !important;
+      animation: pulse-border 1.2s ease-in-out infinite;
+    }
+    @keyframes pulse-border {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(45, 212, 191, 0.15); }
+      50% { box-shadow: 0 0 0 4px rgba(45, 212, 191, 0.12); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .pipeline-sending { animation: none; }
+    }
+
+    button.is-loading {
+      position: relative;
+      pointer-events: none;
+    }
+    button.is-loading .btn-label {
+      opacity: 0.85;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero surface" aria-labelledby="hero-title">
+      <div class="hero-inner">
+        <div class="hero-grid">
+          <div class="hero-copy">
+            <p class="hero-badge">개인정보 처리 API 데모</p>
+            <h1 id="hero-title">개인정보 탐지 및 비식별화 시연</h1>
+            <p class="hero-lede">텍스트·파일에서 개인정보를 탐지하고, 마스킹·암호화·복호화 결과를 한 화면에서 확인합니다.</p>
+            <ol class="hero-steps" aria-label="데모 단계">
+              <li data-step="01">동작 선택 후 입력·실행</li>
+              <li data-step="02">쉬운 요약과 JSON으로 검증</li>
+              <li data-step="03">필요 시 복호화 탭</li>
+            </ol>
+            <p class="hero-foot"><strong>샘플 입력</strong>이 준비되어 있습니다. <strong>이용 안내</strong>에서 흐름을 보고, <strong>텍스트 처리</strong>에서 <strong>API 실행하기</strong> — 비식별화 후 <strong>복호화</strong> 탭으로 이어집니다.</p>
+          </div>
+          <aside class="hero-visual" aria-label="API 흐름 요약">
+            <div class="hero-visual-frame">
+              <svg viewBox="0 0 320 168" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <defs>
+                  <linearGradient id="heroFlow" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stop-color="#5eead4" stop-opacity="0.5"/>
+                    <stop offset="100%" stop-color="#5eead4" stop-opacity="0.12"/>
+                  </linearGradient>
+                </defs>
+                <rect x="16" y="44" width="76" height="96" rx="10" stroke="rgba(148,163,184,0.38)" stroke-width="1.2"/>
+                <line x1="28" y1="64" x2="80" y2="64" stroke="rgba(148,163,184,0.22)" stroke-width="1.2"/>
+                <line x1="28" y1="80" x2="72" y2="80" stroke="rgba(148,163,184,0.16)" stroke-width="1.2"/>
+                <line x1="28" y1="96" x2="80" y2="96" stroke="rgba(148,163,184,0.16)" stroke-width="1.2"/>
+                <circle cx="54" cy="124" r="4" fill="rgba(45,212,191,0.35)"/>
+                <path d="M 104 92 H 128" stroke="url(#heroFlow)" stroke-width="2" stroke-linecap="round"/>
+                <path d="M 122 86 L 132 92 L 122 98" stroke="url(#heroFlow)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                <rect x="140" y="40" width="112" height="104" rx="14" stroke="rgba(45,212,191,0.42)" stroke-width="1.2"/>
+                <circle cx="196" cy="92" r="26" stroke="rgba(45,212,191,0.35)" stroke-width="1.2"/>
+                <path d="M 184 92 L 192 100 L 210 80" stroke="#5eead4" stroke-opacity="0.7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                <path d="M 256 92 H 280" stroke="url(#heroFlow)" stroke-width="2" stroke-linecap="round"/>
+                <path d="M 274 86 L 284 92 L 274 98" stroke="url(#heroFlow)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                <rect x="292" y="52" width="22" height="80" rx="8" stroke="rgba(148,163,184,0.35)" stroke-width="1.2"/>
+                <rect x="296" y="60" width="14" height="12" rx="2" stroke="rgba(45,212,191,0.45)" stroke-width="1.2"/>
+              </svg>
+              <p class="hero-visual-caption">탐지 &middot; 비식별화 &middot; 복호화</p>
+              <div class="hero-endpoints">
+                <span class="hero-chip">POST /scan/text</span>
+                <span class="hero-chip">POST /redact/text</span>
+                <span class="hero-chip">POST /decrypt/text</span>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="layout">
+      <div class="workspace">
+        
+        <div class="tabs-container">
+          <div class="tabs-header" role="tablist" aria-label="데모 섹션">
+            <button type="button" class="tab-btn active" role="tab" aria-selected="true" data-target="pane-text">텍스트 처리</button>
+            <button type="button" class="tab-btn" role="tab" aria-selected="false" data-target="pane-file">파일 처리</button>
+            <button type="button" class="tab-btn" role="tab" aria-selected="false" data-target="pane-decrypt">복호화</button>
+            <button type="button" class="tab-btn" role="tab" aria-selected="false" data-target="pane-help">이용 안내</button>
+          </div>
+
+          <!-- 텍스트 처리 탭 -->
+          <article class="panel surface tab-pane active" id="pane-text" role="tabpanel" aria-label="텍스트 처리">
+            <div class="panel-header">
+              <h2>텍스트 처리</h2>
+              <span class="endpoint-chip" id="textEndpointChip">POST /scan/text</span>
+            </div>
+
+            <form class="demo-panel-form" autocomplete="off" onsubmit="return false">
+            <div class="form-section">
+              <label class="block-label">1. 동작 선택</label>
+              <div class="segment-group">
+                <input type="radio" name="textAction" id="ta-scan" value="scan" checked>
+                <label class="segment-label" for="ta-scan">단순 탐지</label>
+                <input type="radio" name="textAction" id="ta-redact" value="redact">
+                <label class="segment-label" for="ta-redact">비식별화 (마스킹/암호화)</label>
+              </div>
+              <p class="hint">비식별화를 고르면 &ldquo;어떤 종류를 잠글지&rdquo; 칩과 비밀키 입력란이 아래에 나타납니다.</p>
+            </div>
+
+            <div class="form-section">
+              <label class="block-label">2. 입력 텍스트</label>
+              <textarea id="sourceText" aria-label="탐지 또는 비식별화할 텍스트">홍길동 900101-1234568, 010-1234-5678, hong@example.com</textarea>
+            </div>
+
+            <div id="textRedactOptions" class="form-section hidden">
+              <label class="block-label">3. 암호화 대상 선택</label>
+              <p class="hint" style="margin-bottom: 12px;">칩으로 고른 종류만 <strong>잠금 문자열(ENC)</strong>로 바뀌고, 고르지 않은 종류는 <strong>가리기(마스킹)</strong>만 됩니다.</p>
+              <div class="chip-group">
+                <input type="checkbox" id="tc-rrn" value="rrn" checked>
+                <label class="chip-label" for="tc-rrn">주민등록번호</label>
+                <input type="checkbox" id="tc-phone" value="phone">
+                <label class="chip-label" for="tc-phone">휴대전화</label>
+                <input type="checkbox" id="tc-email" value="email">
+                <label class="chip-label" for="tc-email">이메일</label>
+              </div>
+
+              <label class="block-label" style="margin-top: var(--s-2);">4. 잠금에 쓸 비밀키</label>
+              <input id="encryptionKey" type="password" value="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" autocomplete="off" aria-describedby="keyNoticeText">
+              <p class="hint">암호화와 복호화에 <strong>같은 값</strong>을 써야 합니다. 데모는 64개의 <code>a</code>가 기본입니다. (형식은 서버에서 맞춥니다.)</p>
+              <p id="keyNoticeText" class="hint" style="font-size:12px;line-height:1.55;margin-top:8px;">데모는 영구 저장소에 입력·키를 기록하지 않습니다. 운영 환경에서는 HTTPS와 KMS 등으로 키를 분리하는 것이 일반적입니다.</p>
+            </div>
+
+            <div class="panel-actions">
+              <button type="button" class="primary demo-run-text"><span class="btn-label">API 실행하기</span></button>
+              <button type="button" class="ghost demo-fill-text">샘플 값 초기화</button>
+              <span class="btn-spacer" aria-hidden="true"></span>
+              <span class="hint" style="margin:0;font-size:12px;max-width:220px;">선택한 엔드포인트로 요청을 보냅니다.</span>
+            </div>
+            </form>
+
+            <div class="result-area">
+              <div class="result-header">
+                <h3 id="textStatus">응답 대기 중</h3>
+                <button type="button" id="copyTextResult">JSON 복사</button>
+              </div>
+              <div id="textFriendly" class="friendly-result" hidden></div>
+              <p class="json-footnote">아래는 연동·검증용 기술 상세(JSON)입니다.</p>
+              <pre id="textResult">실행 버튼을 누르면 API 응답 JSON이 여기에 표시됩니다.</pre>
+            </div>
+          </article>
+
+          <!-- 파일 처리 탭 -->
+          <article class="panel surface tab-pane" id="pane-file" role="tabpanel" aria-label="파일 처리">
+            <div class="panel-header">
+              <h2>파일 처리</h2>
+              <span class="endpoint-chip" id="fileEndpointChip">POST /scan/file</span>
+            </div>
+
+            <form class="demo-panel-form" autocomplete="off" onsubmit="return false">
+            <div class="form-section">
+              <label class="block-label">1. 동작 선택</label>
+              <div class="segment-group">
+                <input type="radio" name="fileAction" id="fa-scan" value="scan" checked>
+                <label class="segment-label" for="fa-scan">단순 탐지</label>
+                <input type="radio" name="fileAction" id="fa-redact" value="redact">
+                <label class="segment-label" for="fa-redact">비식별화</label>
+              </div>
+            </div>
+
+            <div class="form-section">
+              <label class="block-label">2. 파일 업로드</label>
+              <input id="uploadFile" type="file" accept=".txt,text/plain" aria-label="처리할 텍스트 파일">
+              <p class="hint">UTF-8 인코딩된 text/plain(.txt)만 지원합니다.</p>
+              <p class="hint">업로드한 파일<strong>전체</strong>가 스캔됩니다. <code>examples/large_sample.txt</code>는 행마다 주민등록번호·휴대전화·이메일 예시가 한 줄에 들어 있는 테스트 전용 파일입니다(실제 개인정보 아님).</p>
+            </div>
+
+            <div id="fileRedactOptions" class="form-section hidden">
+              <label class="block-label">3. 암호화 대상 선택</label>
+              <div class="chip-group">
+                <input type="checkbox" id="fc-rrn" value="rrn" checked>
+                <label class="chip-label" for="fc-rrn">주민등록번호</label>
+                <input type="checkbox" id="fc-phone" value="phone">
+                <label class="chip-label" for="fc-phone">휴대전화</label>
+                <input type="checkbox" id="fc-email" value="email">
+                <label class="chip-label" for="fc-email">이메일</label>
+              </div>
+
+              <label class="block-label" style="margin-top: var(--s-2);">4. 잠금에 쓸 비밀키</label>
+              <input id="fileEncryptionKey" type="password" value="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" autocomplete="off">
+            </div>
+
+            <div class="panel-actions">
+              <button type="button" class="primary demo-run-file"><span class="btn-label">파일 API 실행</span></button>
+              <span class="btn-spacer" aria-hidden="true"></span>
+              <span class="hint" style="margin:0;font-size:12px;">업로드 후 multipart로 전송됩니다.</span>
+            </div>
+            </form>
+
+            <div class="result-area">
+              <div class="result-header">
+                <h3 id="fileStatus">응답 대기 중</h3>
+                <button type="button" id="copyFileResult">JSON 복사</button>
+              </div>
+              <div id="fileFriendly" class="friendly-result" hidden></div>
+              <p class="json-footnote">아래는 연동·검증용 기술 상세(JSON)입니다.</p>
+              <pre id="fileResult">실행 버튼을 누르면 API 응답 JSON이 여기에 표시됩니다.</pre>
+            </div>
+          </article>
+
+          <!-- 복호화 탭 -->
+          <article class="panel surface tab-pane" id="pane-decrypt" role="tabpanel" aria-label="복호화">
+            <div class="panel-header">
+              <h2>복호화</h2>
+              <span class="endpoint-chip">POST /decrypt/text</span>
+            </div>
+
+            <div class="decrypt-scenario" aria-labelledby="decrypt-scenario-title">
+              <h3 id="decrypt-scenario-title">권장 시나리오 (한 바퀴)</h3>
+              <ol>
+                <li><strong>텍스트 처리</strong>에서 &ldquo;비식별화&rdquo;를 고르고, 잠글 종류(주민·전화·이메일)를 선택한 뒤 <strong>API 실행</strong>합니다.</li>
+                <li>응답의 <code>outputText</code>와 비밀키가 <strong>이 탭 입력란에 자동으로 채워집니다</strong>. (직접 붙여 넣어도 됩니다.)</li>
+                <li>여기서 <strong>복호화 실행</strong>하면 <code>ENC::종류::페이로드</code>만 원문으로 바뀐 문장이 나옵니다. 마스킹만 된 글은 복구되지 않습니다.</li>
+              </ol>
+            </div>
+
+            <p class="lead" style="margin-bottom: var(--s-2);">이 API는 <strong>이 데모가 만든</strong> <code>ENC::...</code> 문자열만 처리합니다 (AES-GCM). 일반 암호문·다른 포맷은 대상이 아닙니다.</p>
+
+            <form class="demo-panel-form" autocomplete="off" onsubmit="return false">
+            <div class="form-section">
+              <label class="block-label" for="decryptText">1. 잠금(ENC)이 포함된 텍스트</label>
+              <textarea id="decryptText" rows="4" aria-describedby="decryptTextHint" placeholder="ENC::rrn::... 형태가 한 줄 이상 들어 있어야 합니다."></textarea>
+              <p id="decryptTextHint" class="hint">아래 &ldquo;시나리오 샘플 채우기&rdquo;는 데모 키로 미리 만들어 둔 <strong>유효한</strong> 예시 문장입니다. 실행하면 주민·전화·이메일 세 토큰이 풀립니다.</p>
+            </div>
+
+            <div class="form-section">
+              <label class="block-label" for="decryptKey">2. 복호화 키</label>
+              <input id="decryptKey" type="password" value="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" autocomplete="off" aria-describedby="decryptKeyHint">
+              <p id="decryptKeyHint" class="hint">비식별화에서 잠금에 썼던 키와 <strong>바이트 단위로 동일</strong>해야 합니다. (데모 기본 64개 <code>a</code>)</p>
+            </div>
+
+            <div class="panel-actions">
+              <button type="button" class="primary" id="runDecryptAction"><span class="btn-label">복호화 실행</span></button>
+              <button type="button" class="ghost" id="decryptFillSample">시나리오 샘플 채우기</button>
+              <span class="btn-spacer" aria-hidden="true"></span>
+              <span class="hint" style="margin:0;font-size:12px;max-width:280px;">샘플은 키·문장이 이미 맞물려 있습니다. 바로 실행해 볼 수 있습니다.</span>
+            </div>
+            </form>
+
+            <div class="result-area">
+              <div class="result-header">
+                <h3 id="decryptStatus">응답 대기 중</h3>
+                <button type="button" id="copyDecryptResult">JSON 복사</button>
+              </div>
+              <div id="decryptFriendly" class="friendly-result" hidden></div>
+              <p class="json-footnote">아래는 연동·검증용 기술 상세(JSON)입니다.</p>
+              <pre id="decryptResult">실행 버튼을 누르면 원문이 복원되어 표시됩니다.</pre>
+            </div>
+          </article>
+
+          <!-- 이용 안내 탭 (비전문가용 설명·용어) -->
+          <article class="panel surface tab-pane" id="pane-help" role="tabpanel" aria-label="이용 안내">
+            <div class="panel-header">
+              <h2>이용 안내</h2>
+              <span class="endpoint-chip">가이드</span>
+            </div>
+            <p class="help-tab-intro">이 데모의 <strong>흐름(간편 튜토리얼)</strong>, <strong>용어</strong>, <strong>이 화면에서 하는 일</strong>을 한곳에 모았습니다. 실행은 <strong>텍스트·파일·복호화</strong> 탭에서 하시면 됩니다.</p>
+
+            <div class="hero-plain">
+              <h2>이 화면에서 해보는 일 (비전문가용)</h2>
+              <ul>
+                <li><strong>찾기</strong>: 입력한 글·파일에서 개인정보로 의심되는 부분이 어디인지 찾습니다.</li>
+                <li><strong>가리기·잠그기</strong>: 찾은 항목을 별표 처리처럼 가리거나, 선택한 항목만 잠금 문자열(ENC)로 바꿉니다.</li>
+                <li><strong>풀기</strong>: 비식별화에서 잠금(ENC)을 썼다면, 실행 후 <strong>복호화 탭</strong>에 결과가 채워지니 같은 키로 원문이 되돌아오는지 확인합니다. (복호화 탭에도 바로 시험할 수 있는 샘플이 있습니다.)</li>
+              </ul>
+              <p class="hero-plain-foot">각 기능 실행 후 나오는 <strong>JSON</strong>은 시스템 연동·개발용 상세 데이터입니다. 어렵게 느껴지면 실행 결과 위쪽의 <strong>쉬운 요약</strong>만 보셔도 됩니다.</p>
+            </div>
+
+            <section class="help-tutorial-block" aria-labelledby="help-tutorial-title">
+              <h3 class="help-section-title" id="help-tutorial-title">간편 튜토리얼</h3>
+              <div class="tutorial-list">
+                <div class="tutorial-item">
+                  <div class="tutorial-num">1</div>
+                  <div class="tutorial-text">
+                    <h4>탐지 vs 비식별화</h4>
+                    <p><strong>단순 탐지</strong>는 &ldquo;어디에 무엇이 있는지&rdquo;만 봅니다. <strong>비식별화</strong>는 그다음으로 글자를 실제로 가리거나 잠급니다.</p>
+                  </div>
+                </div>
+                <div class="tutorial-item">
+                  <div class="tutorial-num">2</div>
+                  <div class="tutorial-text">
+                    <h4>칩과 키</h4>
+                    <p>비식별화에서 칩으로 고른 종류만 ENC로 잠기고, 나머지는 마스킹됩니다. 비밀키는 <strong>비식별화와 복호화에 동일</strong>해야 합니다.</p>
+                  </div>
+                </div>
+                <div class="tutorial-item">
+                  <div class="tutorial-num">3</div>
+                  <div class="tutorial-text">
+                    <h4>복호화 탭</h4>
+                    <p>텍스트 비식별화가 끝나면 복호화 탭에 결과와 키가 채워집니다. 그대로 실행해 원문이 돌아오는지 확인합니다.</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="glossary" style="margin-bottom: var(--s-3);">
+              <h3 class="help-section-title">용어 쉽게 보기</h3>
+              <p class="hint" style="margin-bottom:12px;">기술 용어 대신 이렇게 이해하시면 됩니다.</p>
+              <details>
+                <summary>개인정보 탐지</summary>
+                <div class="glossary-body">문장이나 파일 안에서 주민번호·전화·이메일처럼 보이는 부분을 <strong>어디에 있는지</strong> 찾아 목록으로 알려 주는 단계입니다. 아직 가리거나 바꾸지는 않습니다.</div>
+              </details>
+              <details>
+                <summary>비식별화</summary>
+                <div class="glossary-body">찾은 개인정보를 읽기 어렵게 만드는 단계입니다. 이 데모에서는 <strong>가리기(마스킹)</strong>와 <strong>잠금(암호화)</strong>을 함께 씁니다.</div>
+              </details>
+              <details>
+                <summary>마스킹</summary>
+                <div class="glossary-body">일부만 보이게 가리는 방식입니다. 예: 전화번호 가운데를 <code>****</code>로 바꿉니다.</div>
+              </details>
+              <details>
+                <summary>ENC / 잠금 문자열</summary>
+                <div class="glossary-body"><code>ENC::...</code> 형태로 바뀐 값은 원문을 직접 보여 주지 않습니다. 같은 비밀키로만 다시 풀 수 있습니다.</div>
+              </details>
+              <details>
+                <summary>복호화</summary>
+                <div class="glossary-body">잠금(ENC)으로 바꾼 내용을, 암호화할 때 쓴 것과 <strong>같은 비밀키</strong>로 원문으로 되돌리는 단계입니다.</div>
+              </details>
+            </section>
+
+            <section class="help-api-block" aria-labelledby="help-api-title">
+              <h3 class="help-section-title" id="help-api-title">화면과 API 대응</h3>
+              <p class="hint" style="margin-bottom: 14px;">ISMS-P 2.6(식별 결과 구조화)·3.2(마스킹·암호화 분리)에 맞춰 응답을 필드 단위로 제공합니다. 데모 화면과 실제 호출 경로는 아래와 같습니다.</p>
+              <div class="api-map-line"><strong>텍스트 탐지</strong> &rarr; <code>POST /scan/text</code> (JSON: <code>text</code>)</div>
+              <div class="api-map-line"><strong>텍스트 비식별화</strong> &rarr; <code>POST /redact/text</code> (JSON: <code>text</code>, <code>encryptTypes</code>, <code>encryptionKey</code>)</div>
+              <div class="api-map-line"><strong>파일 탐지</strong> &rarr; <code>POST /scan/file</code> (multipart: <code>upload</code>)</div>
+              <div class="api-map-line"><strong>파일 비식별화</strong> &rarr; <code>POST /redact/file</code> (multipart: <code>upload</code>, <code>encryptTypes</code>, <code>encryptionKey</code>)</div>
+              <div class="api-map-line"><strong>복호화</strong> &rarr; <code>POST /decrypt/text</code> (JSON: <code>text</code>, <code>encryptionKey</code>)</div>
+            </section>
+          </article>
+
+        </div>
+      </div>
+
+      <aside class="sidebar">
+        <section class="sidebar-card surface">
+          <h3>실시간 처리 흐름</h3>
+          <div class="pipeline" id="pipeline">
+            <div class="pipeline-step">
+              <div class="step-icon">-</div>
+              <div class="step-content">
+                <h4>대기 중</h4>
+                <p>좌측 패널에서 API를 실행해주세요.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="sidebar-card surface">
+          <h3>결과 요약</h3>
+          <div class="summary-grid" id="summaryList">
+            <div class="summary-item"><span>상태</span><strong>대기 중</strong></div>
+            <div class="summary-item"><span>탐지 건수</span><strong>-</strong></div>
+          </div>
+        </section>
+      </aside>
+    </section>
+  </main>
+
+  <script>
+    const SAMPLE_TEXT = "홍길동 900101-1234568, 010-1234-5678, hong@example.com";
+    const SAMPLE_KEY = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+    /** 데모 키로 미리 생성해 둔 비식별화 결과(주민·전화·이메일 ENC). 서버와 동일 키로 복호화 검증됨. */
+    const SAMPLE_DECRYPT_CIPHER = "홍길동 ENC::rrn::OFTOdlQZuKermMuNPyLGXAMASnUKzzmITlTQPz-4VzuleKvwKYHGDAaA, ENC::phone::REPGsT5LFq5_3vb73LITAyh1Y8El0VOPaGfjhoeCw02NWGDOIGxn-TM=, ENC::email::OulkxcpSUu14VAKkzZ00YF179wZ-sgHBfcQUc5lDzS0k3IsvgNPcI8Epems=";
+
+    const countEncTokens = (s) => {
+      if (!s) return 0;
+      const re = /ENC::[a-z_]+::[A-Za-z0-9_\-=]+/g;
+      return (s.match(re) || []).length;
+    };
+
+    function initDemoPage() {
+    const decryptTaInit = document.getElementById("decryptText");
+    if (decryptTaInit) decryptTaInit.value = SAMPLE_DECRYPT_CIPHER;
+
+    // --- Tab Logic ---
+    document.querySelectorAll(".tab-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".tab-btn").forEach(b => {
+          b.classList.remove("active");
+          b.setAttribute("aria-selected", "false");
+        });
+        document.querySelectorAll(".tab-pane").forEach(p => p.classList.remove("active"));
+        btn.classList.add("active");
+        btn.setAttribute("aria-selected", "true");
+        document.getElementById(btn.dataset.target).classList.add("active");
+      });
+    });
+
+    // --- Segmented Control Logic ---
+    const toggleOptions = (radioName, optionsId, chipId) => {
+      document.querySelectorAll(`input[name="${radioName}"]`).forEach(radio => {
+        radio.addEventListener("change", (e) => {
+          const opts = document.getElementById(optionsId);
+          const chip = document.getElementById(chipId);
+          if (e.target.value === "redact") {
+            opts.classList.remove("hidden");
+            chip.textContent = chipId === "textEndpointChip" ? "POST /redact/text" : "POST /redact/file";
+          } else {
+            opts.classList.add("hidden");
+            chip.textContent = chipId === "textEndpointChip" ? "POST /scan/text" : "POST /scan/file";
+          }
+        });
+      });
+    };
+    toggleOptions("textAction", "textRedactOptions", "textEndpointChip");
+    toggleOptions("fileAction", "fileRedactOptions", "fileEndpointChip");
+
+    // --- Helpers ---
+    const getCheckedValues = (prefix) => {
+      return Array.from(document.querySelectorAll(`input[id^="${prefix}"]:checked`)).map(cb => cb.value);
+    };
+
+    const PII_LABEL = { rrn: "주민등록번호", phone: "휴대전화", email: "이메일" };
+    const VALIDATION_HINT = {
+      rrn_checksum: "체크섬 및 생년월일 유효성 검증 후 탐지",
+      regex_pattern: "정규식 패턴 매칭",
+    };
+
+    const setResult = (statusId, resultId, ok, payload) => {
+      const status = document.getElementById(statusId);
+      const result = document.getElementById(resultId);
+      status.textContent = ok ? "성공 (HTTP 200)" : "오류 응답";
+      status.style.color = ok ? "var(--success)" : "var(--danger)";
+      result.textContent = typeof payload === "string" ? payload : JSON.stringify(payload, null, 2);
+    };
+
+    const setFriendly = (id, html, show) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (show === false || html === null || html === "") {
+        el.hidden = true;
+        el.innerHTML = "";
+        return;
+      }
+      el.hidden = false;
+      el.setAttribute("aria-live", "polite");
+      el.innerHTML = html;
+    };
+
+    const escapeHtml = (s) => String(s)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+
+    const buildScanFriendly = (data) => {
+      const n = data.summary ? data.summary.totalMatches : 0;
+      const counts = (data.summary && data.summary.counts) ? data.summary.counts : {};
+      const tags = Object.keys(counts).map((k) => {
+        const label = PII_LABEL[k] || k;
+        return `<span class="friendly-tag">${escapeHtml(label)}<em>${counts[k]}건</em></span>`;
+      }).join("");
+      const matches = data.matches || [];
+      const basisKeys = [];
+      const basisSeen = new Set();
+      matches.forEach((m) => {
+        const k = `${m.piiType}|${m.validationMethod || ""}`;
+        if (!basisSeen.has(k)) {
+          basisSeen.add(k);
+          basisKeys.push(k);
+        }
+      });
+      const detailRows = basisKeys.map((key) => {
+        const m = matches.find((x) => `${x.piiType}|${x.validationMethod || ""}` === key);
+        if (!m) return "";
+        const label = PII_LABEL[m.piiType] || m.piiType;
+        const vm = m.validationMethod || "";
+        const hint = VALIDATION_HINT[vm] || vm;
+        return `<li><strong>${escapeHtml(label)}</strong> &mdash; ${escapeHtml(hint)}</li>`;
+      }).join("");
+      return `
+        <h4>쉬운 요약: 탐지 결과</h4>
+        <p class="friendly-lead">입력 문장에서 개인정보로 보이는 패턴을 <strong>${n}건</strong> 찾았습니다.</p>
+        ${tags ? `<div class="friendly-tags">${tags}</div>` : ""}
+        ${detailRows ? `<p class="friendly-lead" style="margin-top:12px;margin-bottom:6px;font-size:13px;">탐지 근거(유형별)</p><ul class="friendly-detail">${detailRows}</ul>` : ""}
+      `;
+    };
+
+    const buildRedactFriendly = (data) => {
+      const matches = data.matches || [];
+      let enc = 0;
+      let mask = 0;
+      matches.forEach((m) => {
+        if (m.strategy === "encrypt") enc += 1;
+        else mask += 1;
+      });
+      const n = data.summary ? data.summary.totalMatches : matches.length;
+      return `
+        <h4>쉬운 요약: 비식별화 결과</h4>
+        <p class="friendly-lead">총 <strong>${n}건</strong>을 처리했습니다. 그중 <strong>${enc}건</strong>은 잠금(ENC), <strong>${mask}건</strong>은 가리기(마스킹)입니다.</p>
+        <p class="friendly-lead" style="margin-bottom:0;">아래 &ldquo;outputText&rdquo;에 바뀐 문장 전체가 들어 있습니다.</p>
+      `;
+    };
+
+    const buildDecryptFriendly = (data, inputText) => {
+      const t = data.outputText || "";
+      const n = countEncTokens(inputText || "");
+      const short = t.length > 240 ? `${escapeHtml(t.slice(0, 240))}…` : escapeHtml(t);
+      const lead = n === 0
+        ? `<p class="friendly-lead">입력에 <code>ENC::종류::...</code> 패턴이 없어 복호화할 잠금 구간이 없었습니다. 텍스트·파일 탭에서 비식별화로 <strong>잠금</strong>을 켠 뒤 실행하면 결과가 여기로 옮겨집니다.</p>`
+        : `<p class="friendly-lead">잠금 문자열 <strong>${n}개</strong>를 같은 비밀키로 풀어 아래와 같이 원문으로 되돌렸습니다.</p>`;
+      return `
+        <h4>쉬운 요약: 복호화 결과</h4>
+        ${lead}
+        <p class="friendly-lead" style="margin-bottom:6px;font-size:12px;color:var(--muted);">복원된 전체 문장</p>
+        <p style="margin:0;font-size:13px;color:var(--text);word-break:break-all;">${short || "(빈 문자열)"}</p>
+      `;
+    };
+
+    const buildErrorFriendly = (data) => {
+      const d = data && data.detail ? data.detail : "요청을 처리하지 못했습니다.";
+      return `<div class="friendly-error"><strong>무엇이 문제인가요:</strong> ${escapeHtml(String(d))}</div>`;
+    };
+
+    const showPipelineSending = () => {
+      document.getElementById("pipeline").innerHTML = `
+        <div class="pipeline-step pipeline-sending active">
+          <div class="step-icon">&middot;&middot;&middot;</div>
+          <div class="step-content">
+            <h4>서버와 통신 중</h4>
+            <p>요청을 보냈습니다. 응답이 오면 오른쪽 단계가 순서대로 채워집니다.</p>
+          </div>
+        </div>`;
+    };
+
+    const copyResult = async (resultId) => {
+      try {
+        await navigator.clipboard.writeText(document.getElementById(resultId).textContent);
+      } catch (e) {}
+    };
+    document.getElementById("copyTextResult").addEventListener("click", () => copyResult("textResult"));
+    document.getElementById("copyFileResult").addEventListener("click", () => copyResult("fileResult"));
+    document.getElementById("copyDecryptResult").addEventListener("click", () => copyResult("decryptResult"));
+
+    document.querySelectorAll(".demo-fill-text").forEach((el) => {
+      el.addEventListener("click", () => {
+        document.getElementById("sourceText").value = SAMPLE_TEXT;
+        document.getElementById("encryptionKey").value = SAMPLE_KEY;
+      });
+    });
+
+    document.getElementById("decryptFillSample").addEventListener("click", () => {
+      document.getElementById("decryptText").value = SAMPLE_DECRYPT_CIPHER;
+      document.getElementById("decryptKey").value = SAMPLE_KEY;
+    });
+
+    // --- Pipeline Animation ---
+    let pipelineIdleTimer = null;
+
+    const PIPELINE_IDLE_HTML = `
+        <div class="pipeline-step">
+          <div class="step-icon">-</div>
+          <div class="step-content">
+            <h4>대기 중</h4>
+            <p>좌측 패널에서 API를 실행해주세요.</p>
+          </div>
+        </div>`;
+
+    const resetPipelineIdle = () => {
+      const el = document.getElementById("pipeline");
+      if (el) el.innerHTML = PIPELINE_IDLE_HTML;
+    };
+
+    const clearPipelineIdleTimer = () => {
+      if (pipelineIdleTimer) {
+        clearTimeout(pipelineIdleTimer);
+        pipelineIdleTimer = null;
+      }
+    };
+
+    /** 완료·오류 후 잠시 뒤 대기 화면으로 복귀 (이전 단계 OK가 계속 남아 보이는 현상 완화) */
+    const schedulePipelineIdleReset = (ms = 8000) => {
+      clearPipelineIdleTimer();
+      pipelineIdleTimer = setTimeout(() => {
+        resetPipelineIdle();
+        pipelineIdleTimer = null;
+      }, ms);
+    };
+
+    const PIPELINES = {
+      scan: [
+        { title: "입력 확인", copy: "보낸 문장 길이·형식을 점검합니다." },
+        { title: "패턴·검증", copy: "주민등록번호는 체크섬을 확인하고, 전화·이메일은 형식을 맞춥니다." },
+        { title: "결과 만들기", copy: "위치·종류·검증 방식·건수를 묶어 응답합니다." }
+      ],
+      redact: [
+        { title: "설정 확인", copy: "비밀키와 잠글 종류가 맞는지 봅니다." },
+        { title: "패턴 찾기", copy: "문장에서 개인정보를 다시 찾습니다." },
+        { title: "가리기·잠그기", copy: "마스킹하거나 ENC로 바꿉니다." },
+        { title: "결과 만들기", copy: "바뀐 문장 전체를 만듭니다." }
+      ],
+      decrypt: [
+        { title: "형식 확인", copy: "ENC 문자열과 키를 검사합니다." },
+        { title: "잠금 풀기", copy: "같은 키로 원문을 복원합니다." },
+        { title: "결과 만들기", copy: "복원된 글자를 돌려줍니다." }
+      ]
+    };
+
+    const renderPipeline = (type) => {
+      const steps = PIPELINES[type];
+      document.getElementById("pipeline").innerHTML = steps.map((s, i) => `
+        <div class="pipeline-step" data-index="${i}">
+          <div class="step-icon">${i+1}</div>
+          <div class="step-content">
+            <h4>${s.title}</h4>
+            <p>${s.copy}</p>
+          </div>
+        </div>
+      `).join("");
+      return Array.from(document.querySelectorAll(".pipeline-step"));
+    };
+
+    const animatePipelineAfterResponse = async (type, response) => {
+      const steps = renderPipeline(type);
+      const ok = response.ok;
+      for (let i = 0; i < steps.length; i++) {
+        const step = steps[i];
+        step.classList.add("active");
+        await new Promise((resolve) => setTimeout(resolve, 140));
+        step.classList.remove("active");
+        if (!ok) {
+          step.classList.add("error");
+          step.querySelector(".step-icon").textContent = "!";
+          break;
+        }
+        step.classList.add("done");
+        step.querySelector(".step-icon").textContent = "OK";
+      }
+      schedulePipelineIdleReset(8000);
+    };
+
+    const ENDPOINT_HINT = {
+      "/scan/text": "텍스트에서 찾기만",
+      "/redact/text": "텍스트 가리기·잠그기",
+      "/scan/file": "파일에서 찾기만",
+      "/redact/file": "파일 가리기·잠그기",
+      "/decrypt/text": "잠금 풀기"
+    };
+
+    const offsetToLineCol = (text, start) => {
+      if (text == null || start === undefined || start < 0) return null;
+      const slice = text.slice(0, start);
+      const lines = slice.split(/\n/);
+      const line = lines.length;
+      const col = (lines[lines.length - 1] || "").length + 1;
+      return { line, col };
+    };
+
+    const buildLocationBadges = (sourceText, start, end) => {
+      const offsetOnly = start != null && end != null
+        ? `<div class="summary-loc-offset">문자 오프셋 <code>${start}</code>~<code>${end}</code> (끝 인덱스는 포함하지 않음)</div>`
+        : "";
+      if (sourceText == null || start == null || end == null) {
+        return { badges: "", offsetNote: offsetOnly };
+      }
+      const startLoc = offsetToLineCol(sourceText, start);
+      const endLoc = offsetToLineCol(sourceText, Math.max(0, end - 1));
+      if (!startLoc || !endLoc) {
+        return { badges: "", offsetNote: offsetOnly };
+      }
+      const sameLine = startLoc.line === endLoc.line;
+      const lineBadges = sameLine
+        ? `<span class="summary-loc-badge">줄 <strong>${startLoc.line}</strong></span>
+           <span class="summary-loc-badge">열 <strong>${startLoc.col}</strong> ~ <strong>${endLoc.col}</strong></span>`
+        : `<span class="summary-loc-badge">시작 줄 <strong>${startLoc.line}</strong> 열 <strong>${startLoc.col}</strong></span>
+           <span class="summary-loc-badge">끝 줄 <strong>${endLoc.line}</strong> 열 <strong>${endLoc.col}</strong></span>`;
+      const badges = `<div class="summary-loc-row">${lineBadges}</div>`;
+      return { badges, offsetNote: offsetOnly };
+    };
+
+    const dedupeMatchesForSummary = (matches, isRedact) => {
+      const seen = new Set();
+      const out = [];
+      matches.forEach((m) => {
+        const rawText = isRedact ? (m.original != null ? m.original : "") : (m.value != null ? m.value : "");
+        const key = `${m.piiType}|${rawText}`;
+        if (seen.has(key)) return;
+        seen.add(key);
+        out.push(m);
+      });
+      return { list: out, total: matches.length };
+    };
+
+    const buildMatchSummaryHtml = (matches, sourceText, isRedact) => {
+      if (!matches.length) return "";
+      const { list: rows, total } = dedupeMatchesForSummary(matches, isRedact);
+      const dedupNote = rows.length < total
+        ? `<div class="summary-note" style="margin-bottom:8px;">동일 유형·동일 값은 한 번만 표시합니다. (전체 <strong>${total}</strong>건 중 <strong>${rows.length}</strong>건 표시)</div>`
+        : "";
+      const cards = rows.map((m, idx) => {
+        const label = PII_LABEL[m.piiType] || m.piiType;
+        const vm = m.validationMethod || "";
+        const vh = VALIDATION_HINT[vm] || vm;
+        const start = typeof m.start === "number" ? m.start : null;
+        const end = typeof m.end === "number" ? m.end : null;
+        const rawText = isRedact ? (m.original != null ? m.original : "") : (m.value != null ? m.value : "");
+        const { badges, offsetNote } = buildLocationBadges(sourceText, start, end);
+        let actionLine = "";
+        if (isRedact && m.strategy) {
+          actionLine = `<div class="summary-match-meta">처리: ${m.strategy === "encrypt" ? "AES-GCM 토큰(ENC::)으로 치환" : "마스킹(부분 가리기)"}</div>`;
+        }
+        const snippetBlock = rawText
+          ? `<div class="summary-snippet">
+               <span class="summary-snippet-label">원문에 이렇게 적혀 있음</span>
+               <span class="summary-snippet-value">${escapeHtml(rawText)}</span>
+             </div>`
+          : "";
+        return `
+          <div class="summary-match" role="listitem">
+            <div class="summary-match-head"><span class="summary-match-idx">#${idx + 1}</span>${escapeHtml(label)}</div>
+            <div class="summary-match-meta">탐지 방식: ${escapeHtml(vh)}</div>
+            ${snippetBlock}
+            ${badges}
+            ${offsetNote}
+            ${actionLine}
+          </div>`;
+      }).join("");
+      return dedupNote + cards;
+    };
+
+    const updateSummary = (endpoint, payload, options = {}) => {
+      const sourceText = options.sourceText != null ? options.sourceText : null;
+      const hint = ENDPOINT_HINT[endpoint] || endpoint;
+      const esc = escapeHtml(endpoint);
+      const root = document.getElementById("summaryList");
+
+      if (endpoint === "/decrypt/text") {
+        const out = payload && payload.outputText != null ? payload.outputText : "";
+        const inputT = options.decryptInput != null ? options.decryptInput : "";
+        const n = countEncTokens(inputT);
+        root.innerHTML = `
+          <div class="summary-item"><span>이번에 한 일</span><strong title="${esc}">${escapeHtml(hint)}</strong></div>
+          <div class="summary-item"><span>풀린 ENC</span><strong>${n}개</strong></div>
+          <div class="summary-item"><span>출력 길이</span><strong>${out.length}자</strong></div>
+          <div class="summary-note">마스킹만 적용된 구간은 복구할 수 없습니다. 이 API는 <code>ENC::</code> 토큰만 처리합니다. 복호화 응답에는 탐지용 <code>start</code>/<code>end</code>가 없습니다.</div>`;
+        return;
+      }
+
+      const total = payload && payload.summary ? payload.summary.totalMatches : "-";
+      const matches = (payload && payload.matches) || [];
+      const isRedact = endpoint.indexOf("redact") !== -1;
+      const fileMeta = payload && payload.file;
+      const detailHtml = matches.length
+        ? `<div class="summary-detail-scroll" tabindex="0" role="region" aria-label="탐지 상세 목록"><div class="summary-detail-stack">${buildMatchSummaryHtml(matches, sourceText, isRedact)}</div></div>`
+        : `<div class="summary-note">탐지된 개인정보가 없습니다. 입력 형식·인코딩(UTF-8) 및 패턴(주민번호·전화·이메일)을 확인하세요.</div>`;
+
+      const fileRows = fileMeta
+        ? `<div class="summary-item summary-item-wide"><span>파일명</span><strong title="${escapeHtml(fileMeta.filename)}">${escapeHtml(fileMeta.filename)}</strong></div>
+           <div class="summary-item"><span>파일 크기</span><strong>${fileMeta.sizeBytes} bytes</strong></div>`
+        : "";
+
+      root.innerHTML = `
+        <div class="summary-item"><span>이번에 한 일</span><strong title="${esc}">${escapeHtml(hint)}</strong></div>
+        <div class="summary-item"><span>찾은 건수</span><strong>${total}</strong></div>
+        ${fileRows}
+        ${detailHtml}`;
+    };
+
+    const setBtnLoading = (btn, loading) => {
+      const label = btn.querySelector(".btn-label");
+      if (!label) return;
+      if (!btn.dataset.defaultLabel) btn.dataset.defaultLabel = label.textContent;
+      btn.classList.toggle("is-loading", loading);
+      btn.disabled = loading;
+      label.textContent = loading ? "요청 중…" : btn.dataset.defaultLabel;
+    };
+
+    // --- Actions ---
+    const runTextHandler = async (e) => {
+      const btn = e.currentTarget;
+      clearPipelineIdleTimer();
+      setBtnLoading(btn, true);
+      document.getElementById("textStatus").textContent = "처리 중…";
+      document.getElementById("textStatus").style.color = "var(--warning)";
+      setFriendly("textFriendly", null, false);
+
+      const action = document.querySelector("input[name=\"textAction\"]:checked").value;
+      const body = { text: document.getElementById("sourceText").value };
+
+      if (action === "redact") {
+        body.encryptTypes = getCheckedValues("tc-");
+        body.encryptionKey = document.getElementById("encryptionKey").value.trim();
+      }
+
+      const endpoint = `/${action}/text`;
+      showPipelineSending();
+
+      try {
+        const res = await fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body)
+        });
+        const data = await res.json();
+        await animatePipelineAfterResponse(action, res);
+        setResult("textStatus", "textResult", res.ok, data);
+        updateSummary(endpoint, data, { sourceText: body.text });
+
+        if (res.ok) {
+          setFriendly("textFriendly", action === "scan" ? buildScanFriendly(data) : buildRedactFriendly(data));
+        } else {
+          setFriendly("textFriendly", buildErrorFriendly(data));
+        }
+
+        if (res.ok && action === "redact" && data.outputText != null) {
+          document.getElementById("decryptText").value = data.outputText;
+          document.getElementById("decryptKey").value = body.encryptionKey || "";
+          const decryptTab = document.querySelector("[data-target=\"pane-decrypt\"]");
+          if (decryptTab) {
+            decryptTab.style.color = "var(--accent-strong)";
+            decryptTab.setAttribute("title", "복호화 탭에 outputText가 채워졌습니다.");
+            setTimeout(() => {
+              decryptTab.style.color = "";
+              decryptTab.removeAttribute("title");
+            }, 6000);
+          }
+        }
+      } catch (err) {
+        setResult("textStatus", "textResult", false, { detail: "네트워크 오류 또는 응답 파싱 실패" });
+        setFriendly("textFriendly", buildErrorFriendly({ detail: "네트워크 오류 또는 응답 파싱 실패" }));
+        document.getElementById("pipeline").innerHTML = `
+          <div class="pipeline-step error">
+            <div class="step-icon">!</div>
+            <div class="step-content"><h4>연결 실패</h4><p>서버에 닿지 못했습니다.</p></div>
+          </div>`;
+        schedulePipelineIdleReset(8000);
+      } finally {
+        setBtnLoading(btn, false);
+      }
+    };
+    document.querySelectorAll(".demo-run-text").forEach((el) => el.addEventListener("click", runTextHandler));
+
+    const runFileHandler = async (e) => {
+      const btn = e.currentTarget;
+      clearPipelineIdleTimer();
+      const file = document.getElementById("uploadFile").files[0];
+      if (!file) {
+        document.getElementById("fileStatus").textContent = "파일을 선택하세요";
+        document.getElementById("fileStatus").style.color = "var(--danger)";
+        return;
+      }
+
+      setBtnLoading(btn, true);
+      document.getElementById("fileStatus").textContent = "처리 중…";
+      document.getElementById("fileStatus").style.color = "var(--warning)";
+      setFriendly("fileFriendly", null, false);
+
+      const action = document.querySelector("input[name=\"fileAction\"]:checked").value;
+      const formData = new FormData();
+      formData.append("upload", file);
+
+      if (action === "redact") {
+        getCheckedValues("fc-").forEach(v => formData.append("encryptTypes", v));
+        formData.append("encryptionKey", document.getElementById("fileEncryptionKey").value.trim());
+      }
+
+      const endpoint = `/${action}/file`;
+      let fileSourceText = "";
+      try {
+        fileSourceText = await file.text();
+      } catch (e) {
+        fileSourceText = "";
+      }
+      showPipelineSending();
+
+      try {
+        const res = await fetch(endpoint, { method: "POST", body: formData });
+        const data = await res.json();
+        await animatePipelineAfterResponse(action, res);
+        setResult("fileStatus", "fileResult", res.ok, data);
+        updateSummary(endpoint, data, { sourceText: fileSourceText });
+        if (res.ok) {
+          setFriendly("fileFriendly", action === "scan" ? buildScanFriendly(data) : buildRedactFriendly(data));
+          if (action === "redact" && data.outputText != null) {
+            document.getElementById("decryptText").value = data.outputText;
+            document.getElementById("decryptKey").value = document.getElementById("fileEncryptionKey").value.trim();
+            const decryptTab = document.querySelector("[data-target=\"pane-decrypt\"]");
+            if (decryptTab) {
+              decryptTab.style.color = "var(--accent-strong)";
+              decryptTab.setAttribute("title", "복호화 탭에 outputText가 채워졌습니다.");
+              setTimeout(() => {
+                decryptTab.style.color = "";
+                decryptTab.removeAttribute("title");
+              }, 6000);
+            }
+          }
+        } else {
+          setFriendly("fileFriendly", buildErrorFriendly(data));
+        }
+      } catch (err) {
+        setResult("fileStatus", "fileResult", false, { detail: "네트워크 오류 또는 응답 파싱 실패" });
+        setFriendly("fileFriendly", buildErrorFriendly({ detail: "네트워크 오류 또는 응답 파싱 실패" }));
+        document.getElementById("pipeline").innerHTML = `
+          <div class="pipeline-step error">
+            <div class="step-icon">!</div>
+            <div class="step-content"><h4>연결 실패</h4><p>서버에 닿지 못했습니다.</p></div>
+          </div>`;
+        schedulePipelineIdleReset(8000);
+      } finally {
+        setBtnLoading(btn, false);
+      }
+    };
+    document.querySelectorAll(".demo-run-file").forEach((el) => el.addEventListener("click", runFileHandler));
+
+    document.getElementById("runDecryptAction").addEventListener("click", async (e) => {
+      const btn = e.currentTarget;
+      clearPipelineIdleTimer();
+      setBtnLoading(btn, true);
+      document.getElementById("decryptStatus").textContent = "처리 중…";
+      document.getElementById("decryptStatus").style.color = "var(--warning)";
+      setFriendly("decryptFriendly", null, false);
+      showPipelineSending();
+
+      try {
+        const res = await fetch("/decrypt/text", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            text: document.getElementById("decryptText").value,
+            encryptionKey: document.getElementById("decryptKey").value.trim()
+          })
+        });
+        const data = await res.json();
+        const decryptInput = document.getElementById("decryptText").value;
+        await animatePipelineAfterResponse("decrypt", res);
+        setResult("decryptStatus", "decryptResult", res.ok, data);
+        updateSummary("/decrypt/text", data, { decryptInput });
+        if (res.ok) {
+          setFriendly("decryptFriendly", buildDecryptFriendly(data, decryptInput));
+        } else {
+          setFriendly("decryptFriendly", buildErrorFriendly(data));
+        }
+      } catch (err) {
+        setResult("decryptStatus", "decryptResult", false, { detail: "네트워크 오류 또는 응답 파싱 실패" });
+        setFriendly("decryptFriendly", buildErrorFriendly({ detail: "네트워크 오류 또는 응답 파싱 실패" }));
+        document.getElementById("pipeline").innerHTML = `
+          <div class="pipeline-step error">
+            <div class="step-icon">!</div>
+            <div class="step-content"><h4>연결 실패</h4><p>서버에 닿지 못했습니다.</p></div>
+          </div>`;
+        schedulePipelineIdleReset(8000);
+      } finally {
+        setBtnLoading(btn, false);
+      }
+    });
+
+    }
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", initDemoPage);
+    } else {
+      initDemoPage();
+    }
+  </script>
+</body>
+</html>
